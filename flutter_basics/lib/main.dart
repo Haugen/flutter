@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import './question.dart';
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatefulWidget {
@@ -20,29 +22,53 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    var questions = ['What is your name?', "How old are you?"];
+    var questions = ['What is your name?', 'How old are you?'];
 
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
           title: Text('My first app!'),
         ),
-        body: Center(
+        body: Container(
+          margin: EdgeInsets.all(10),
+          padding: EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            border: Border.all(color: Color.fromRGBO(35, 35, 35, 1), width: 2),
+          ),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Text(questions[_questionIndex]),
-              RaisedButton(
-                child: Text('Answer 1'),
-                onPressed: _answerQuestion,
+              Question(
+                questionText: questions[_questionIndex],
               ),
-              RaisedButton(
-                child: Text('Answer 2'),
-                onPressed: _answerQuestion,
-              ),
-              RaisedButton(
-                child: Text('Answer 3'),
-                onPressed: _answerQuestion,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Column(
+                    children: [
+                      RaisedButton(
+                        child: Text('Answer 1'),
+                        onPressed: _answerQuestion,
+                      ),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      RaisedButton(
+                        child: Text('Answer 2'),
+                        onPressed: _answerQuestion,
+                      ),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      RaisedButton(
+                        child: Text('Answer 3'),
+                        onPressed: _answerQuestion,
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ],
           ),
