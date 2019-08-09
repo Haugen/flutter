@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import './question.dart';
+import './answer.dart';
 
 void main() => runApp(MyApp());
 
@@ -12,66 +13,80 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  final questions = const [
+    {
+      'questionText': 'What is your favorite color?',
+      'answers': ['Green', 'Orange', 'Blue', 'Yellow'],
+    },
+    {
+      'questionText': 'What is your favorite animal?',
+      'answers': ['Panter', 'Snake', 'Jaguar', 'Lion'],
+    },
+    {
+      'questionText': 'What is your favorite programming language?',
+      'answers': ['JavaScript', 'Python', 'Dart', 'Go'],
+    }
+  ];
+
   var _questionIndex = 0;
+  bool done = false;
 
   void _answerQuestion() {
     setState(() {
-      _questionIndex = this._questionIndex == 0 ? 1 : 0;
+      _questionIndex++;
+      if (_questionIndex >= questions.length) done = true;
+    });
+  }
+
+  void _startOver() {
+    setState(() {
+      _questionIndex = 0;
+      done = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    var questions = ['What is your name?', 'How old are you?'];
-
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
           title: Text('My first app!'),
         ),
         body: Container(
+          width: double.infinity,
           margin: EdgeInsets.all(10),
           padding: EdgeInsets.all(10),
           decoration: BoxDecoration(
             border: Border.all(color: Color.fromRGBO(35, 35, 35, 1), width: 2),
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Question(
-                questionText: questions[_questionIndex],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Column(
+          child: done
+              ? Center(
+                  child: Column(
                     children: [
+                      Text('All done!'),
                       RaisedButton(
-                        child: Text('Answer 1'),
-                        onPressed: _answerQuestion,
-                      ),
+                        child: Text('Start over'),
+                        onPressed: _startOver,
+                      )
                     ],
                   ),
-                  Column(
-                    children: [
-                      RaisedButton(
-                        child: Text('Answer 2'),
-                        onPressed: _answerQuestion,
-                      ),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      RaisedButton(
-                        child: Text('Answer 3'),
-                        onPressed: _answerQuestion,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ],
-          ),
+                )
+              : Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Question(
+                      questionText: questions[_questionIndex]['questionText'],
+                    ),
+                    Column(
+                      children: [
+                        ...(questions[_questionIndex]['answers']
+                                as List<String>)
+                            .map((answer) => Answer(_answerQuestion, answer))
+                            .toList()
+                      ],
+                    ),
+                  ],
+                ),
         ),
       ),
     );
