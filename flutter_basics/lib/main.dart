@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import './question.dart';
-import './answer.dart';
+import './quiz.dart';
+import './result.dart';
 
 void main() => runApp(MyApp());
 
@@ -13,7 +13,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final questions = const [
+  final _questions = const [
     {
       'questionText': 'What is your favorite color?',
       'answers': ['Green', 'Orange', 'Blue', 'Yellow'],
@@ -34,7 +34,7 @@ class _MyAppState extends State<MyApp> {
   void _answerQuestion() {
     setState(() {
       _questionIndex++;
-      if (_questionIndex >= questions.length) done = true;
+      if (_questionIndex >= _questions.length) done = true;
     });
   }
 
@@ -60,33 +60,8 @@ class _MyAppState extends State<MyApp> {
             border: Border.all(color: Color.fromRGBO(35, 35, 35, 1), width: 2),
           ),
           child: done
-              ? Center(
-                  child: Column(
-                    children: [
-                      Text('All done!'),
-                      RaisedButton(
-                        child: Text('Start over'),
-                        onPressed: _startOver,
-                      )
-                    ],
-                  ),
-                )
-              : Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Question(
-                      questionText: questions[_questionIndex]['questionText'],
-                    ),
-                    Column(
-                      children: [
-                        ...(questions[_questionIndex]['answers']
-                                as List<String>)
-                            .map((answer) => Answer(_answerQuestion, answer))
-                            .toList()
-                      ],
-                    ),
-                  ],
-                ),
+              ? Result(_startOver)
+              : Quiz(_questions, _answerQuestion, _questionIndex),
         ),
       ),
     );
