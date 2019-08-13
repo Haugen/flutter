@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import './widgets/new_transaction.dart';
 import './widgets/transaction_list.dart';
+import './widgets/no_transactions_yet.dart';
 import './models/transaction.dart';
 
 void main() => runApp(MyApp());
@@ -43,18 +44,18 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final List<Transaction> _userTransactions = [
-    Transaction(
-      id: '1',
-      title: 'Adidas Stan Smith',
-      amount: 49.55,
-      date: DateTime.now(),
-    ),
-    Transaction(
-      id: '2',
-      title: 'Cheap Monday Jeans',
-      amount: 39.99,
-      date: DateTime.now(),
-    ),
+    // Transaction(
+    //   id: '1',
+    //   title: 'Adidas Stan Smith',
+    //   amount: 49.55,
+    //   date: DateTime.now(),
+    // ),
+    // Transaction(
+    //   id: '2',
+    //   title: 'Cheap Monday Jeans',
+    //   amount: 39.99,
+    //   date: DateTime.now(),
+    // ),
   ];
 
   void _addNewTransaction(String txTitle, double txAmount) {
@@ -104,7 +105,9 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Text("Chart!"),
             ),
           ),
-          TransactionList(_userTransactions),
+          _userTransactions.isNotEmpty
+              ? TransactionList(_userTransactions)
+              : NoTransactionsYet()
         ],
       ),
     );
