@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 
 import './widgets/new_transaction.dart';
 import './widgets/transaction_list.dart';
 import './widgets/no_transactions_yet.dart';
 import './widgets/chart.dart';
 import './models/transaction.dart';
+
+var uuid = new Uuid();
 
 void main() => runApp(MyApp());
 
@@ -46,18 +49,54 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final List<Transaction> _userTransactions = [
-    // Transaction(
-    //   id: '1',
-    //   title: 'Adidas Stan Smith',
-    //   amount: 49.55,
-    //   date: DateTime.now(),
-    // ),
-    // Transaction(
-    //   id: '2',
-    //   title: 'Cheap Monday Jeans',
-    //   amount: 39.99,
-    //   date: DateTime.now(),
-    // ),
+    Transaction(
+      id: uuid.v1(),
+      title: 'Adidas Stan Smith',
+      amount: 49.55,
+      date: DateTime.now(),
+    ),
+    Transaction(
+      id: uuid.v1(),
+      title: 'Cheap Monday Jeans',
+      amount: 39.99,
+      date: DateTime.now().subtract(Duration(days: 1)),
+    ),
+    Transaction(
+      id: uuid.v1(),
+      title: 'Good \'ol Boots',
+      amount: 120.00,
+      date: DateTime.now().subtract(Duration(days: 2)),
+    ),
+    Transaction(
+      id: uuid.v1(),
+      title: 'T-shirt',
+      amount: 19.99,
+      date: DateTime.now().subtract(Duration(days: 3)),
+    ),
+    Transaction(
+      id: uuid.v1(),
+      title: 'Nice dinner',
+      amount: 12.50,
+      date: DateTime.now().subtract(Duration(days: 4)),
+    ),
+    Transaction(
+      id: uuid.v1(),
+      title: 'Jacket',
+      amount: 65.99,
+      date: DateTime.now().subtract(Duration(days: 6)),
+    ),
+    Transaction(
+      id: uuid.v1(),
+      title: 'Bogotá brewed beer',
+      amount: 9.99,
+      date: DateTime.now().subtract(Duration(days: 6)),
+    ),
+    Transaction(
+      id: uuid.v1(),
+      title: 'iPhone charger',
+      amount: 15.50,
+      date: DateTime.now().subtract(Duration(days: 3)),
+    ),
   ];
 
   List<Transaction> get _recentTransactions {
@@ -79,7 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
       title: txTitle,
       amount: txAmount,
       date: chosenDate,
-      id: DateTime.now().toString(),
+      id: uuid.v1(),
     );
 
     setState(() {
@@ -93,6 +132,12 @@ class _MyHomePageState extends State<MyHomePage> {
         builder: (_) {
           return NewTransaction(_addNewTransaction);
         });
+  }
+
+  void _deleteTransaction(String id) {
+    setState(() {
+      _userTransactions.removeWhere((tx) => tx.id == id);
+    });
   }
 
   @override
@@ -119,7 +164,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ? Column(
                   children: <Widget>[
                     Chart(_recentTransactions),
-                    TransactionList(_userTransactions),
+                    TransactionList(_userTransactions, _deleteTransaction),
                   ],
                 )
               : NoTransactionsYet()

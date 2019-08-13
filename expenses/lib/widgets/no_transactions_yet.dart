@@ -5,7 +5,15 @@ class NoTransactionsYet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        Text('No transactions yet!'),
+        SizedBox(
+          height: 100,
+        ),
+        Text(
+          'No transactions yet!',
+          style: TextStyle(
+            fontSize: 20,
+          ),
+        ),
         SizedBox(
           height: 20,
         ),
