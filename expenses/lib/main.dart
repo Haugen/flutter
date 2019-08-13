@@ -142,29 +142,44 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    var appBar = AppBar(
+      title: Text('Personal expenses'),
+      actions: <Widget>[
+        IconButton(
+          icon: Icon(Icons.add),
+          onPressed: () => _startAddNewTransaction(context),
+        )
+      ],
+    );
+
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () => _startAddNewTransaction(context),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      appBar: AppBar(
-        title: Text('Personal expenses'),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () => _startAddNewTransaction(context),
-          )
-        ],
-      ),
+      appBar: appBar,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           _userTransactions.isNotEmpty
               ? Column(
                   children: <Widget>[
-                    Chart(_recentTransactions),
-                    TransactionList(_userTransactions, _deleteTransaction),
+                    Container(
+                      height: (MediaQuery.of(context).size.height -
+                              appBar.preferredSize.height -
+                              MediaQuery.of(context).padding.top) *
+                          0.29,
+                      child: Chart(_recentTransactions),
+                    ),
+                    Container(
+                      height: (MediaQuery.of(context).size.height -
+                              appBar.preferredSize.height -
+                              MediaQuery.of(context).padding.top) *
+                          0.71,
+                      child: TransactionList(
+                          _userTransactions, _deleteTransaction),
+                    ),
                   ],
                 )
               : NoTransactionsYet()
