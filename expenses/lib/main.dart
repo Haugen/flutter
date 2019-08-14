@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
@@ -155,6 +157,21 @@ class _MyHomePageState extends State<MyHomePage> {
     bool isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
 
+    var showChartSwitch = Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Text('Show Chart:'),
+        Switch.adaptive(
+          value: _showChart,
+          onChanged: (val) {
+            setState(() {
+              _showChart = val;
+            });
+          },
+        ),
+      ],
+    );
+
     var appBar = AppBar(
       title: Text('Personal expenses'),
       actions: <Widget>[
@@ -165,46 +182,35 @@ class _MyHomePageState extends State<MyHomePage> {
       ],
     );
 
+    var preferredHeight = MediaQuery.of(context).size.height -
+        appBar.preferredSize.height -
+        MediaQuery.of(context).padding.top;
+
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () => _startAddNewTransaction(context),
-      ),
+      floatingActionButton: Platform.isIOS
+          ? SizedBox.shrink()
+          : FloatingActionButton(
+              child: Icon(Icons.add),
+              onPressed: () => _startAddNewTransaction(context),
+            ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       appBar: appBar,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text('Show Chart:'),
-              Switch(
-                value: _showChart,
-                onChanged: (val) {
-                  setState(() {
-                    _showChart = val;
-                  });
-                },
-              )
-            ],
-          ),
           _userTransactions.isNotEmpty
               ? Column(
                   children: <Widget>[
+                    showChartSwitch,
                     if (_showChart)
                       Container(
-                        height: (MediaQuery.of(context).size.height -
-                                appBar.preferredSize.height -
-                                MediaQuery.of(context).padding.top) *
-                            0.29,
+                        height: preferredHeight * 0.3,
                         child: Chart(_recentTransactions),
                       ),
                     Container(
-                      height: (MediaQuery.of(context).size.height -
-                              appBar.preferredSize.height -
-                              MediaQuery.of(context).padding.top) *
-                          0.71,
+                      height: _showChart
+                          ? preferredHeight * 0.6
+                          : preferredHeight * 0.9,
                       child: TransactionList(
                           _userTransactions, _deleteTransaction),
                     ),
