@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
@@ -160,7 +161,10 @@ class _MyHomePageState extends State<MyHomePage> {
     var showChartSwitch = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Text('Show Chart:'),
+        Text(
+          'Show Chart:',
+          style: Theme.of(context).textTheme.title,
+        ),
         Switch.adaptive(
           value: _showChart,
           onChanged: (val) {
@@ -172,30 +176,35 @@ class _MyHomePageState extends State<MyHomePage> {
       ],
     );
 
-    var appBar = AppBar(
-      title: Text('Personal expenses'),
-      actions: <Widget>[
-        IconButton(
-          icon: Icon(Icons.add),
-          onPressed: () => _startAddNewTransaction(context),
-        )
-      ],
-    );
+    PreferredSizeWidget appBar = Platform.isIOS
+        ? CupertinoNavigationBar(
+            middle: Text('Personal expenses'),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                GestureDetector(
+                  child: Icon(CupertinoIcons.add),
+                  onTap: () => _startAddNewTransaction(context),
+                )
+              ],
+            ),
+          )
+        : AppBar(
+            title: Text('Personal expenses'),
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(Icons.add),
+                onPressed: () => _startAddNewTransaction(context),
+              )
+            ],
+          );
 
     var preferredHeight = MediaQuery.of(context).size.height -
         appBar.preferredSize.height -
         MediaQuery.of(context).padding.top;
 
-    return Scaffold(
-      floatingActionButton: Platform.isIOS
-          ? SizedBox.shrink()
-          : FloatingActionButton(
-              child: Icon(Icons.add),
-              onPressed: () => _startAddNewTransaction(context),
-            ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      appBar: appBar,
-      body: Column(
+    final pageBody = SafeArea(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           _userTransactions.isNotEmpty
@@ -212,7 +221,9 @@ class _MyHomePageState extends State<MyHomePage> {
                           ? preferredHeight * 0.6
                           : preferredHeight * 0.9,
                       child: TransactionList(
-                          _userTransactions, _deleteTransaction),
+                        _userTransactions,
+                        _deleteTransaction,
+                      ),
                     ),
                   ],
                 )
@@ -220,5 +231,23 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
     );
+
+    return Platform.isIOS
+        ? CupertinoPageScaffold(
+            child: pageBody,
+            navigationBar: appBar,
+          )
+        : Scaffold(
+            floatingActionButton: Platform.isIOS
+                ? SizedBox.shrink()
+                : FloatingActionButton(
+                    child: Icon(Icons.add),
+                    onPressed: () => _startAddNewTransaction(context),
+                  ),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
+            appBar: appBar,
+            body: pageBody,
+          );
   }
 }
