@@ -116,6 +116,8 @@ class _MyHomePageState extends State<MyHomePage> {
     }).toList();
   }
 
+  bool _showChart = false;
+
   void _addNewTransaction(
     String txTitle,
     double txAmount,
@@ -149,6 +151,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    // To check phone orientation.
+    bool isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+
     var appBar = AppBar(
       title: Text('Personal expenses'),
       actions: <Widget>[
@@ -169,16 +175,31 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text('Show Chart:'),
+              Switch(
+                value: _showChart,
+                onChanged: (val) {
+                  setState(() {
+                    _showChart = val;
+                  });
+                },
+              )
+            ],
+          ),
           _userTransactions.isNotEmpty
               ? Column(
                   children: <Widget>[
-                    Container(
-                      height: (MediaQuery.of(context).size.height -
-                              appBar.preferredSize.height -
-                              MediaQuery.of(context).padding.top) *
-                          0.29,
-                      child: Chart(_recentTransactions),
-                    ),
+                    if (_showChart)
+                      Container(
+                        height: (MediaQuery.of(context).size.height -
+                                appBar.preferredSize.height -
+                                MediaQuery.of(context).padding.top) *
+                            0.29,
+                        child: Chart(_recentTransactions),
+                      ),
                     Container(
                       height: (MediaQuery.of(context).size.height -
                               appBar.preferredSize.height -
