@@ -110,13 +110,19 @@ class _MyHomePageState extends State<MyHomePage> {
   ];
 
   List<Transaction> get _recentTransactions {
-    return _userTransactions.where((tx) {
+    var _userTransactionsSubset = _userTransactions.where((tx) {
       return tx.date.isAfter(
         DateTime.now().subtract(
           Duration(days: 7),
         ),
       );
     }).toList();
+
+    _userTransactionsSubset.sort((a, b) {
+      return a.date.compareTo(b.date);
+    });
+
+    return _userTransactionsSubset;
   }
 
   bool _showChart = false;
