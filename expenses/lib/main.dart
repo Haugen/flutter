@@ -161,8 +161,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     // To check phone orientation.
-    bool isLandscape =
-        MediaQuery.of(context).orientation == Orientation.landscape;
+    // bool isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
 
     var showChartSwitch = Row(
       mainAxisAlignment: MainAxisAlignment.center,
