@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import './screens/categories_screen.dart';
 import './screens/category_meals_screen.dart';
+import './screens/meal_detail_screen.dart';
 
 void main() => runApp(MyApp());
 
@@ -29,9 +30,26 @@ class MyApp extends StatelessWidget {
               ),
             ),
       ),
-      home: CategoriesScreen(),
+      // home: CategoriesScreen(),
+      initialRoute: '/',
       routes: {
+        '/': (ctx) => CategoriesScreen(),
         CategoryMealsScreen.routeName: (ctx) => CategoryMealsScreen(),
+        MealDetailScreen.routeName: (ctx) => MealDetailScreen(),
+      },
+      // Triggers when you try to navigate to a named route that is missing from
+      // the routes map above.
+      onGenerateRoute: (settings) {
+        return MaterialPageRoute(
+          builder: (ctx) => CategoriesScreen(),
+        );
+      },
+      // Triggers if onGeneratRoute isn't defined or doesn't return a valid
+      // navigation action. Like a 404.
+      onUnknownRoute: (settings) {
+        return MaterialPageRoute(
+          builder: (ctx) => CategoriesScreen(),
+        );
       },
     );
   }
