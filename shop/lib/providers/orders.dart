@@ -17,7 +17,21 @@ class OrderItem {
 }
 
 class Orders with ChangeNotifier {
-  List<OrderItem> _orders = [];
+  List<OrderItem> _orders = [
+    OrderItem(
+      id: DateTime.now().toString(),
+      amount: 9.99,
+      dateTime: DateTime.now(),
+      products: [
+        CartItem(
+          id: DateTime.now().toString(),
+          title: 'Title!',
+          quantity: 1,
+          price: 9.99,
+        )
+      ],
+    ),
+  ];
 
   List<OrderItem> get orders {
     return [..._orders];

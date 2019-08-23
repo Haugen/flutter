@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop/screens/cart_screen.dart';
 
 import '../widgets/products_grid.dart';
 import '../providers/cart.dart';
+import '../screens/cart_screen.dart';
+import '../widgets/app_drawer.dart';
 
 enum FilterOptions {
   Favorites,
@@ -21,6 +22,8 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      body: ProductsGrid(_showOnlyFavorites),
+      drawer: AppDrawer(),
       appBar: AppBar(
         title: Text('My shop!'),
         actions: <Widget>[
@@ -62,7 +65,6 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
           ),
         ],
       ),
-      body: ProductsGrid(_showOnlyFavorites),
     );
   }
 }
