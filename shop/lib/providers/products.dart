@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 import './product.dart';
 
 class Products with ChangeNotifier {
+  final url = 'https://flutter-test-5f950.firebaseio.com/products.json';
+
   final List<Product> _items = [
     Product(
       id: 'p1',
@@ -63,15 +67,28 @@ class Products with ChangeNotifier {
     notifyListeners();
   }
 
-  void addProduct(Product product) {
+  Future<void> addProduct(Product product) async {
+    var newPost = await http.post(
+      url,
+      body: json.encode({
+        'title': product.title,
+        'price': product.price,
+        'description': product.description,
+        'imageUrl': product.imageUrl,
+        'isFavorite': product.isFavorite,
+      }),
+    );
+
     final newProduct = Product(
-      id: DateTime.now().toString(),
+      id: json.decode(newPost.body)['name'],
       title: product.title,
       price: product.price,
       description: product.description,
       imageUrl: product.imageUrl,
     );
+
     _items.add(newProduct);
     notifyListeners();
+    return newPost;
   }
 }
