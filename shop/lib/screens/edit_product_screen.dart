@@ -78,7 +78,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     }
   }
 
-  void _saveForm() async {
+  Future<void> _saveForm() async {
     final isValid = _form.currentState.validate();
     if (!isValid) return;
 
@@ -86,16 +86,37 @@ class _EditProductScreenState extends State<EditProductScreen> {
     setState(() => _isLoading = true);
 
     if (_editedProduct.id != null) {
-      Provider.of<Products>(context, listen: false)
+      await Provider.of<Products>(context, listen: false)
           .updateProduct(_editedProduct.id, _editedProduct);
       Navigator.of(context).pop();
     } else {
-      await Provider.of<Products>(context, listen: false)
-          .addProduct(_editedProduct);
-
-      setState(() => _isLoading = false);
-      Navigator.of(context).pop();
+      try {
+        await Provider.of<Products>(context, listen: false)
+            .addProduct(_editedProduct);
+      } catch (error) {
+        await showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text('An error occured!'),
+            content: Text('Something went wrong.'),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Okay'),
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                },
+              ),
+            ],
+          ),
+        );
+      }
+      // finally {
+      //   setState(() => _isLoading = false);
+      //   Navigator.of(context).pop();
+      // }
     }
+    setState(() => _isLoading = false);
+    Navigator.of(context).pop();
   }
 
   @override
@@ -105,7 +126,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
         title: Text('Edit Product'),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.add),
+            icon: Icon(Icons.save),
             onPressed: _saveForm,
           ),
         ],
