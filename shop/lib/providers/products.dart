@@ -7,6 +7,9 @@ import '../models/http_exception.dart';
 
 class Products with ChangeNotifier {
   final baseUrl = 'https://flutter-test-5f950.firebaseio.com';
+  final String authToken;
+
+  Products(this.authToken, this._items);
 
   List<Product> _items = [
     // Product(
@@ -59,7 +62,7 @@ class Products with ChangeNotifier {
     final prodIndex = _items.indexWhere((prod) => prod.id == id);
 
     if (prodIndex >= 0) {
-      final url = '$baseUrl/products/$id.json';
+      final url = '$baseUrl/products/$id.json?auth=$authToken';
       await http.patch(
         url,
         body: json.encode({
@@ -77,7 +80,7 @@ class Products with ChangeNotifier {
 
   // Deleting product with optimistic updating pattern here.
   Future<void> deleteProduct(String id) async {
-    final url = '$baseUrl/products/$id.json';
+    final url = '$baseUrl/products/$id.json?auth=$authToken';
 
     final existingProductIndex = _items.indexWhere((prod) => prod.id == id);
     var existingProduct = _items[existingProductIndex];
@@ -97,7 +100,7 @@ class Products with ChangeNotifier {
 
   Future<void> fetchAndSetProducts() async {
     try {
-      final url = '$baseUrl/products.json';
+      final url = '$baseUrl/products.json?auth=$authToken';
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       final List<Product> loadedProducts = [];
@@ -122,7 +125,7 @@ class Products with ChangeNotifier {
 
   Future<void> addProduct(Product product) async {
     try {
-      final url = '$baseUrl/products.json';
+      final url = '$baseUrl/products.json?auth=$authToken';
       var response = await http.post(
         url,
         body: json.encode({
