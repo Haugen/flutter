@@ -24,17 +24,19 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProxyProvider<Auth, Products>(
           builder: (ctx, auth, previousProducts) => Products(
             auth.token,
+            auth.userId,
             previousProducts == null ? [] : previousProducts.items,
           ),
-          initialBuilder: (_) => Products('null', []),
+          initialBuilder: (_) => Products('null', 'null', []),
         ),
         ChangeNotifierProvider.value(value: Cart()),
         ChangeNotifierProxyProvider<Auth, Orders>(
           builder: (ctx, auth, previousOrders) => Orders(
             auth.token,
+            auth.userId,
             previousOrders == null ? [] : previousOrders.orders,
           ),
-          initialBuilder: (_) => Orders('null', []),
+          initialBuilder: (_) => Orders('null', 'null', []),
         ),
       ],
       child: Consumer<Auth>(
@@ -44,7 +46,17 @@ class MyApp extends StatelessWidget {
             primarySwatch: Colors.purple,
             accentColor: Colors.deepOrange,
           ),
-          home: auth.isAuth ? ProductsOverviewScreen() : AuthScreen(),
+          home: auth.isAuth
+              ? ProductsOverviewScreen()
+              : FutureBuilder(
+                  future: auth.tryAutoLogin(),
+                  builder: (ctx, authResult) {
+                    if (authResult.connectionState == ConnectionState.waiting) {
+                      return Text('Trying to log you in.');
+                    }
+                    return AuthScreen();
+                  },
+                ),
           routes: {
             ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
             CartScreen.routeName: (ctx) => CartScreen(),

@@ -8,8 +8,9 @@ import '../models/http_exception.dart';
 class Products with ChangeNotifier {
   final baseUrl = 'https://flutter-test-5f950.firebaseio.com';
   final String authToken;
+  final String userId;
 
-  Products(this.authToken, this._items);
+  Products(this.authToken, this.userId, this._items);
 
   List<Product> _items = [
     // Product(
@@ -70,7 +71,6 @@ class Products with ChangeNotifier {
           'price': newProduct.price,
           'description': newProduct.description,
           'imageUrl': newProduct.imageUrl,
-          'isFavorite': newProduct.isFavorite,
         }),
       );
       _items[prodIndex] = newProduct;
@@ -98,11 +98,18 @@ class Products with ChangeNotifier {
     existingProduct = null;
   }
 
-  Future<void> fetchAndSetProducts() async {
+  Future<void> fetchAndSetProducts([bool filterByUser = false]) async {
+    final filterString =
+        filterByUser ? 'orderBy="creatorId"&equalTo="$userId"' : '';
+
     try {
-      final url = '$baseUrl/products.json?auth=$authToken';
-      final response = await http.get(url);
-      final extractedData = json.decode(response.body) as Map<String, dynamic>;
+      final prodUrl = '$baseUrl/products.json?auth=$authToken&$filterString';
+      final userFavUrl = '$baseUrl/userFavorites/$userId.json?auth=$authToken';
+      final prodResponse = await http.get(prodUrl);
+      final userFavResponse = await http.get(userFavUrl);
+      final extractedData =
+          json.decode(prodResponse.body) as Map<String, dynamic>;
+      final userFavData = json.decode(userFavResponse.body);
       final List<Product> loadedProducts = [];
 
       extractedData.forEach((prodId, prodData) {
@@ -111,7 +118,8 @@ class Products with ChangeNotifier {
           title: prodData['title'],
           price: prodData['price'],
           description: prodData['description'],
-          isFavorite: prodData['isFavorite'],
+          isFavorite:
+              userFavData == null ? false : userFavData[prodId] ?? false,
           imageUrl: prodData['imageUrl'],
         ));
       });
@@ -133,7 +141,7 @@ class Products with ChangeNotifier {
           'price': product.price,
           'description': product.description,
           'imageUrl': product.imageUrl,
-          'isFavorite': product.isFavorite,
+          'creatorId': userId,
         }),
       );
 

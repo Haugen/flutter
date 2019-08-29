@@ -22,8 +22,9 @@ class OrderItem {
 class Orders with ChangeNotifier {
   final baseUrl = 'https://flutter-test-5f950.firebaseio.com';
   final String authToken;
+  final String userId;
 
-  Orders(this.authToken, this._orders);
+  Orders(this.authToken, this.userId, this._orders);
 
   List<OrderItem> _orders = [
     // OrderItem(
